@@ -5,9 +5,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as redisStore from 'cache-manager-redis-store';
 import { RedisClientOptions } from 'redis';
+import { BossModule } from './apis/boss/boss.module';
+import { UserModule } from './apis/user/user.module';
 
 @Module({
   imports: [
+    UserModule,
+    BossModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',

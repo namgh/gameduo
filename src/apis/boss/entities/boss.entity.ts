@@ -6,16 +6,16 @@ export class Boss {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ default: 0 })
   level0: number;
 
-  @Column()
+  @Column({ default: 0 })
   level1: number;
 
-  @Column()
+  @Column({ default: 0 })
   level2: number;
 
-  @Column()
+  @Column({ default: 0 })
   second: number;
 
   @ManyToOne(() => User)
