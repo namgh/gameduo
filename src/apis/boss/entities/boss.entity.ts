@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/apis/user/entities/user.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Boss {
@@ -6,5 +7,17 @@ export class Boss {
   id: number;
 
   @Column()
-  canenter: Boolean;
+  level0: number;
+
+  @Column()
+  level1: number;
+
+  @Column()
+  level2: number;
+
+  @Column()
+  second: number;
+
+  @ManyToOne(() => User)
+  user: User;
 }
