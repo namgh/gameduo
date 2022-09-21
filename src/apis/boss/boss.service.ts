@@ -9,11 +9,15 @@ import { Repository } from 'typeorm';
 import { Boss } from './entities/boss.entity';
 import { Cache } from 'cache-manager';
 import axios from 'axios';
+import { User } from '../user/entities/user.entity';
 @Injectable()
 export class BossService {
   constructor(
     @InjectRepository(Boss)
     private readonly bossrepo: Repository<Boss>,
+
+    @InjectRepository(User)
+    private readonly userrepo: Repository<User>,
 
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache, // private readonly gamestatic = axios.get( //   'https://dmpilf5svl7rv.cloudfront.net/assignment/backend/bossRaidData.json', // ),
@@ -66,5 +70,29 @@ export class BossService {
       canenter: false,
       userid: check.canenter,
     };
+  }
+
+  async boss_end({ input }) {
+    const ranking = await this.cacheManager.get('ranking');
+    const check = await this.cacheManager.get('check');
+
+    check.canenter = true;
+    await this.cacheManager.set('check', check, { ttl: 0 });
+
+    const { userid, ...rest } = input;
+    let j = rest.reduce((a, c) => a + c);
+
+    const user = await this.userrepo.findOne({ where: { id: userid } });
+    await this.userrepo.save({ ...user, score: j });
+    if (!ranking) {
+      const temp = {};
+      temp['userid'] = j;
+      return await this.cacheManager.set('ranking', temp, { ttl: 0 });
+    }
+    if (ranking['userid'] < j) return '종료되었습니다';
+
+    ranking['userid'] = j;
+    await this.cacheManager.set('ranking', ranking, { ttl: 0 });
+    return '종료되었습니다';
   }
 }
